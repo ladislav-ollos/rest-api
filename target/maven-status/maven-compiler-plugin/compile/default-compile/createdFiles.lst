@@ -1,0 +1,6 @@
+com\example\data\Product.class
+com\example\repository\UserRepository.class
+com\example\data\User.class
+com\example\repository\ProductRepository.class
+com\example\repository\SubscriptionRepository.class
+com\example\data\Subscription.class
