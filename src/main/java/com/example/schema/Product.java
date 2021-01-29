@@ -9,6 +9,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Entity
@@ -30,7 +31,8 @@ public class Product {
     @Schema(description = "product description", example = "a cool product")
     private String description;
 
-    @Schema(description = "product price in USD", example = "1700", defaultValue = "1700")
+    @NotNull
+    @Schema(description = "product price in USD", example = "1700", defaultValue = "1700", required = true)
     private BigDecimal price;
 
     @Schema(description = "product duration in milliseconds", example = "604800000", defaultValue = "604800000")

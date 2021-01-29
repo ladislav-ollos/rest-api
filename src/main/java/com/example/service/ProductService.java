@@ -12,8 +12,11 @@ import java.util.Optional;
 
 @Component
 public class ProductService {
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
+
+    public ProductService(@Autowired ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
     public Product getProduct(Long id) {
         Optional<Product> product = productRepository.findById(id);

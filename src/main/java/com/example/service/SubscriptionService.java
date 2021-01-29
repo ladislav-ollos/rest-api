@@ -10,20 +10,24 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SubscriptionService {
-    @Autowired
-    private SubscriptionRepository subscriptionRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private ProductRepository productRepository;
+    private final SubscriptionRepository subscriptionRepository;
+    private final UserRepository userRepository;
+    private final ProductRepository productRepository;
+
+    public SubscriptionService(@Autowired SubscriptionRepository subscriptionRepository, @Autowired UserRepository userRepository, @Autowired ProductRepository productRepository) {
+        this.subscriptionRepository = subscriptionRepository;
+        this.userRepository = userRepository;
+        this.productRepository = productRepository;
+    }
 
     public Subscription getSubscription(Long id) {
         return subscriptionRepository.findById(id).get();
     }
 
-    public void subscribe(Long user, Long product) {
+    public Subscription subscribe(Long user, Long product) {
         Subscription subscription = new Subscription(userRepository.findById(user).get(), productRepository.findById(product).get());
         subscriptionRepository.save(subscription);
+        return subscription;
     }
 
     public void pause(Long id) {

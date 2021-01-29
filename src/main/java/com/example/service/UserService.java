@@ -11,8 +11,11 @@ import java.util.Optional;
 
 @Component
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserService(@Autowired UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public User getUser(Long id) {
         Optional<User> product = userRepository.findById(id);

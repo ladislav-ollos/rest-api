@@ -4,6 +4,7 @@ import com.example.schema.Subscription;
 import com.example.schema.User;
 import com.example.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,14 +13,18 @@ import java.util.Set;
 @RestController
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public UserController(@Autowired UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping(value = "/user")
     public List<User> user() {
         return userService.getUsers();
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/user")
     public User user(@RequestBody User user) {
         return userService.saveUser(user);
