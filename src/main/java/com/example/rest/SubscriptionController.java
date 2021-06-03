@@ -9,7 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 
-
+/**
+ * @author Ladislav
+ *
+ */
 @RestController
 public class SubscriptionController {
 
@@ -19,6 +22,12 @@ public class SubscriptionController {
         this.subscriptionService = subscriptionService;
     }
 
+     /**
+     * Create a new subscription
+     * @param user -  the {@link Subscription} to save
+     * 
+     * @return the newly created {@link Subscription}
+     */
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Post new subscription for given user and product")
     @PostMapping(value = "/subscription", params = {"userId", "productId"})
@@ -28,25 +37,43 @@ public class SubscriptionController {
                              @Parameter(description="id of subscribed product", required = true) Long productId) {
         return subscriptionService.subscribe(userId, productId);
     }
-
+    
+    /**
+     * Get subscription by ID.
+     * @param id -  the subscription ID
+     * 
+     * @return {@link Subscription}
+     */
     @GetMapping(value = "/subscription/{id}")
     @Operation(summary = "Get existing subscription")
     public Subscription subscription(@PathVariable(value = "id") long id) {
         return subscriptionService.getSubscription(id);
     }
-
+    
+    /**
+     * Delete subscription by ID.
+     * @param id -  the subscription ID
+     */
     @DeleteMapping(value = "/subscription/{id}")
     @Operation(summary = "Cancel existing subscription")
     public void cancel(@PathVariable (value = "id") long id) {
         subscriptionService.delete(id);
     }
 
+    /**
+     * Pause subscription by ID.
+     * @param id -  the subscription ID
+     */
     @PostMapping(value = "/subscription/{id}/pause")
     @Operation(summary = "Pause existing subscription", description = "Sets the paused flag. Depending on the semantics of pause/unpause the end date could be updated too.")
     public void pause(@PathVariable (value = "id") long id) {
         subscriptionService.pause(id);
     }
 
+    /**
+     * Unpause subscription by ID.
+     * @param id -  the subscription ID
+     */
     @PostMapping(value = "/subscription/{id}/unpause")
     @Operation(summary = "Unpause existing subscription", description = "Unsets the paused flag. Depending on the semantics of pause/unpause the end date could be updated too.")
     public void unpause(@PathVariable(value = "id") long id) {
