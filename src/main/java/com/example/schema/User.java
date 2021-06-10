@@ -17,6 +17,11 @@ import java.util.Set;
 @NoArgsConstructor
 @ToString
 @Slf4j
+/**
+ * Represents a user who can have multiple subscriptions.
+ *
+ * @author Ladislav
+ */
 public class User {
 
     @Id
