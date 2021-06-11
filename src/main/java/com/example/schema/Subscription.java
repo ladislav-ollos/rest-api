@@ -19,6 +19,12 @@ import java.time.temporal.ChronoUnit;
 @NoArgsConstructor
 @ToString
 @Slf4j
+
+/**
+ * Represents a subscription of a user on a product.
+ *
+ * @author Ladislav
+ */
 public class Subscription {
 
     @Id
