@@ -18,6 +18,11 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @ToString
 @Slf4j
+/**
+ * A product with name, price, description and a duration.
+ *
+ * @author Ladislav
+ */
 public class Product {
 
     @Id
