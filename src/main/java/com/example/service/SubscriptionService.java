@@ -1,80 +1,93 @@
 package com.example.service;
 
-import com.example.schema.Subscription;
-import com.example.repository.ProductRepository;
+import com.example.domain.SubscriptionEntity;
+import com.example.exception.ConflictException;
+import com.example.exception.NotFoundException;
+import com.example.mapper.SubscriptionMapper;
 import com.example.repository.SubscriptionRepository;
-import com.example.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.schema.Product;
+import com.example.schema.Subscription;
+import com.example.schema.User;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
  * @author Ladislav
- *
  */
 @Component
+@RequiredArgsConstructor
+@Transactional
+@Slf4j
 public class SubscriptionService {
     private final SubscriptionRepository subscriptionRepository;
-    private final UserRepository userRepository;
-    private final ProductRepository productRepository;
-
-    public SubscriptionService(@Autowired SubscriptionRepository subscriptionRepository, @Autowired UserRepository userRepository, @Autowired ProductRepository productRepository) {
-        this.subscriptionRepository = subscriptionRepository;
-        this.userRepository = userRepository;
-        this.productRepository = productRepository;
-    }
+    private final SubscriptionMapper subscriptionMapper;
+    private final UserService userService;
+    private final ProductService productService;
 
     /**
      * Get subscription by ID
-     * @param id - {@link Subscription#id}
-     * 
+     *
+     * @param id - {@link Subscription#getId()}
      * @return {@link Subscription}
      */
     public Subscription getSubscription(Long id) {
-        return subscriptionRepository.findById(id).get();
+        SubscriptionEntity subscriptionEntity = subscriptionRepository.findById(id)
+                .or(() -> {
+                    throw new NotFoundException();
+                }).get();
+        return subscriptionMapper.toDto(subscriptionEntity);
     }
 
     /**
      * Subscribes {@link User} to {@link Product} if both exist for the given ids.
-     * @param user - {@link User#id}
-     * @param product - {@link Product#id}
-     * 
+     *
+     * @param userId    - {@link User#getId()}
+     * @param productId - {@link Product#getId()}
      * @return {@link Subscription}
      */
-    public Subscription subscribe(Long user, Long product) {
-        Subscription subscription = new Subscription(userRepository.findById(user).get(), productRepository.findById(product).get());
-        subscriptionRepository.save(subscription);
-        return subscription;
+    public Subscription subscribe(Long userId, Long productId) {
+        Subscription subscription = new Subscription(userService.getUser(userId), productService.getProduct(productId));
+        SubscriptionEntity subscriptionEntity = subscriptionMapper.toEntity(subscription);
+        SubscriptionEntity saved = subscriptionRepository.save(subscriptionEntity);
+        return subscriptionMapper.toDto(saved);
     }
 
     /**
      * Pause subscription by ID
-     * @param id - {@link Subscription#id}
-     * 
-     * @return {@link Subscription}
+     *
+     * @param id - {@link Subscription#getId()}
      */
     public void pause(Long id) {
-        Subscription subscription = subscriptionRepository.findById(id).get();
+        SubscriptionEntity subscriptionEntity = subscriptionRepository.findById(id).orElseThrow(NotFoundException::new);
+        if (subscriptionEntity.isPaused()) {
+            throw new ConflictException("Already paused.");
+        }
         // TODO: do whatever pause should do
-        subscription.setPaused(true);
-        subscriptionRepository.save(subscription);
+        subscriptionEntity.setPaused(true);
+        subscriptionRepository.save(subscriptionEntity);
     }
 
     /**
      * Unpause subscription by ID
-     * @param id - {@link Subscription#id}
-     * 
-     * @return {@link Subscription}
+     *
+     * @param id - {@link Subscription#getId()}
      */
     public void unpause(Long id) {
-        Subscription subscription = subscriptionRepository.findById(id).get();
+        SubscriptionEntity subscriptionEntity = subscriptionRepository.findById(id).orElseThrow(NotFoundException::new);
+        if (!subscriptionEntity.isPaused()) {
+            throw new ConflictException("Not paused.");
+        }
         // TODO: do whatever unpause should do
-        subscription.setPaused(false);
-        subscriptionRepository.save(subscription);
+        subscriptionEntity.setPaused(false);
+        subscriptionRepository.save(subscriptionEntity);
     }
 
     /**
      * Delete subscription by ID
-     * @param id - {@link Subscription#id}
+     *
+     * @param id - {@link Subscription#getId()}
      */
     public void delete(Long id) {
         subscriptionRepository.deleteById(id);

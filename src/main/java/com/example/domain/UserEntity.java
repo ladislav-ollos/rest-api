@@ -1,7 +1,6 @@
-package com.example.schema;
+package com.example.domain;
 
-import io.swagger.v3.oas.annotations.Hidden;
-import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,20 +14,21 @@ import java.util.Set;
  *
  * @author Ladislav
  */
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString
 @Slf4j
-public class User {
+public class UserEntity {
 
-    @Hidden
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Schema(description = "username", example = "l.ollos")
     private String userName;
 
-    @Hidden
-    private Set<Subscription> subscriptions;
+    @OneToMany(mappedBy = "user")
+    private Set<SubscriptionEntity> subscriptions;
 
 }

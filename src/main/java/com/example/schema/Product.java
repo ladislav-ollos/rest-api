@@ -2,32 +2,28 @@ package com.example.schema;
 
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
-@Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@ToString
-@Slf4j
 /**
  * A product with name, price, description and a duration.
  *
  * @author Ladislav
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
+@Slf4j
 public class Product {
 
-    @Id
     @Hidden
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     @Schema(description = "product name", example = "Our top product", defaultValue = "Our top product")

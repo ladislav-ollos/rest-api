@@ -3,33 +3,29 @@ package com.example.rest;
 import com.example.schema.Subscription;
 import com.example.schema.User;
 import com.example.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Set;
+import java.util.Collection;
 
 /**
  * @author Ladislav
  *
  */
 @RestController
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
-
-    public UserController(@Autowired UserService userService) {
-        this.userService = userService;
-    }
     
     /**
      * List all users. 
      * 
-     * @return list of {@link User}
+     * @return {@link Collection<User>}
      */
     @GetMapping(value = "/user")
-    public List<User> user() {
+    public Collection<User> user() {
         return userService.getUsers();
     }
 
@@ -60,10 +56,10 @@ public class UserController {
      * List the subscriptions of the specified user.
      * @param id -  the user ID
      * 
-     * @return List of {@link Subscription}
+     * @return {@link Collection<Subscription>}
      */
     @GetMapping(value = "/user/{id}/subscription")
-    public Set<Subscription> subscriptions(@PathVariable (value = "id") long id) {
+    public Collection<Subscription> subscriptions(@PathVariable (value = "id") long id) {
         return userService.getUser(id).getSubscriptions();
     }
 }

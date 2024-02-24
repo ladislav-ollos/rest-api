@@ -9,36 +9,26 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-
-@Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@ToString
-@Slf4j
 
 /**
  * Represents a subscription of a user on a product.
  *
  * @author Ladislav
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
+@Slf4j
 public class Subscription {
 
-    @Id
     @Hidden
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @ManyToOne
-    @JoinColumn(name="user_id", nullable=false)
     @JsonIgnoreProperties({"subscriptions"})
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name="product_id", nullable=false)
     private Product product;
 
     @Schema(description = "subscription start")
@@ -53,11 +43,5 @@ public class Subscription {
     public Subscription(User user, Product product) {
         this.user = user;
         this.product = product;
-    }
-
-    @PrePersist
-    void calculateStartAndEnd() {
-        this.startDate = LocalDateTime.now();
-        this.endDate = startDate.plus(product.getDuration(), ChronoUnit.MILLIS);
     }
 }

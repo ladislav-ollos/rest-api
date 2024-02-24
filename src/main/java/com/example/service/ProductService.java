@@ -1,40 +1,40 @@
 package com.example.service;
 
+import com.example.domain.ProductEntity;
 import com.example.exception.NotFoundException;
+import com.example.mapper.ProductMapper;
 import com.example.repository.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import com.example.schema.Product;
 
+import jakarta.transaction.Transactional;
+import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author Ladislav
  *
  */
 @Component
+@RequiredArgsConstructor
+@Transactional
+@Slf4j
 public class ProductService {
     private final ProductRepository productRepository;
-
-    public ProductService(@Autowired ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
+    private final ProductMapper productMapper;
     
     /**
      * Get product by ID if present
-     * @param id - {@link Subscription#id}
-     * @throws {@link NotFoundException}
+     * @param id - {@link Product#getId()}
      * 
      * @return {@link Product}
      */
     public Product getProduct(Long id) {
-        Optional<Product> product = productRepository.findById(id);
-        if (product.isPresent()) {
-            return product.get();
-        }
-        throw new NotFoundException();
+        ProductEntity productEntity = productRepository.findById(id).orElseThrow(NotFoundException::new);
+        return productMapper.toDto(productEntity);
     }
     
     /**
@@ -42,8 +42,9 @@ public class ProductService {
      * 
      * @return list of {@link Product}
      */
-    public List<Product> getProducts() {
-        return productRepository.findAll();
+    public Collection<Product> getProducts() {
+        List<ProductEntity> productEntities = productRepository.findAll();
+        return productMapper.toDto(productEntities);
     }
     
     /**
@@ -52,6 +53,8 @@ public class ProductService {
      * @return {@link Product}
      */
     public Product saveProduct(Product product) {
-        return productRepository.save(product);
+        ProductEntity productEntity = productMapper.toEntity(product);
+        ProductEntity saved = productRepository.save(productEntity);
+        return productMapper.toDto(saved);
     }
 }

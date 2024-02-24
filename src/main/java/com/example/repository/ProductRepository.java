@@ -1,14 +1,14 @@
 package com.example.repository;
 
+import com.example.domain.ProductEntity;
 import org.springframework.data.repository.CrudRepository;
-import com.example.schema.Product;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Transactional
-public interface ProductRepository extends CrudRepository<Product, Long> {
+@Repository
+public interface ProductRepository extends CrudRepository<ProductEntity, Long> {
 
-    List<Product> findAll();
+    List<ProductEntity> findAll();
 
 }
