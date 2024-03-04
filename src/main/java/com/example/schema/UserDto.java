@@ -20,15 +20,15 @@ import java.util.Set;
 @NoArgsConstructor
 @ToString
 @Slf4j
-public class User {
+public class UserDto {
 
     @Hidden
     private long id;
 
-    @Schema(description = "username", example = "l.ollos")
+    @Schema(description = "username", example = "ladislav")
     private String userName;
 
     @Hidden
-    private Set<Subscription> subscriptions;
+    private Set<SubscriptionDto> subscriptions;
 
 }

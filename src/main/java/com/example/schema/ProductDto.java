@@ -10,6 +10,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 
 /**
  * A product with name, price, description and a duration.
@@ -21,7 +22,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @ToString
 @Slf4j
-public class Product {
+public class ProductDto {
 
     @Hidden
     private long id;
@@ -29,14 +30,18 @@ public class Product {
     @Schema(description = "product name", example = "Our top product", defaultValue = "Our top product")
     private String name;
 
-    @Schema(description = "product description", example = "a cool product")
+    @Schema(description = "product description", example = "a cool product", defaultValue = "a cool product")
     private String description;
 
     @NotNull
-    @Schema(description = "product price in USD", example = "1700", defaultValue = "1700", required = true)
+    @Schema(description = "product price in USD", example = "1700", defaultValue = "1700")
     private BigDecimal price;
 
-    @Schema(description = "product duration in milliseconds", example = "604800000", defaultValue = "604800000")
-    private long duration;
+    @NotNull
+    @Schema(description = "product tax in USD", example = "452.15", defaultValue = "452.15")
+    private BigDecimal tax;
+
+    @Schema(description = "product duration in milliseconds", example = "0", defaultValue = "0")
+    private Duration duration;
 
 }

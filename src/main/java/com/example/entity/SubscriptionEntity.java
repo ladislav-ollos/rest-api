@@ -1,4 +1,4 @@
-package com.example.domain;
+package com.example.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -7,8 +7,8 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 
 
 /**
@@ -39,19 +39,12 @@ public class SubscriptionEntity {
 
 
     private LocalDateTime startDate;
-
-    private LocalDateTime endDate;
+    private LocalDateTime projectedEndDate;
+    private LocalDateTime lastUnpaused;
+    private Duration durationLeftAtLastUnpause;
 
     private boolean isPaused;
 
-    public SubscriptionEntity(UserEntity user, ProductEntity product) {
-        this.user = user;
-        this.product = product;
-    }
+    private boolean isCanceled;
 
-    @PrePersist
-    void calculateStartAndEnd() {
-        this.startDate = LocalDateTime.now();
-        this.endDate = startDate.plus(product.getDuration(), ChronoUnit.MILLIS);
-    }
 }

@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 @SpringBootApplication
 @EnableConfigurationProperties
-@EntityScan(basePackages = {"com.example.domain"})
+@EntityScan(basePackages = {"com.example.entity"})
 @ComponentScan("com.example.*")
 public class Application {
 

@@ -1,40 +1,32 @@
-package com.example.domain;
+package com.example.bo;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 
 /**
  * A product with name, price, description and a duration.
  *
  * @author Ladislav
  */
-@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString
-public class ProductEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+@Slf4j
+public class Product {
     private long id;
-
     private String name;
-
     private String description;
-
     @NotNull
     private BigDecimal price;
-
-    private long duration;
-
+    @NotNull
+    private BigDecimal tax;
+    private Duration duration;
 }

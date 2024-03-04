@@ -1,10 +1,10 @@
 package com.example.service;
 
-import com.example.domain.UserEntity;
+import com.example.bo.User;
+import com.example.entity.UserEntity;
 import com.example.exception.NotFoundException;
 import com.example.mapper.UserMapper;
 import com.example.repository.UserRepository;
-import com.example.schema.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class UserService {
      */
     public User getUser(Long id) {
         UserEntity userEntity = userRepository.findById(id).orElseThrow(NotFoundException::new);
-        return userMapper.toDto(userEntity);
+        return userMapper.fromEntity(userEntity);
     }
 
     /**
@@ -40,19 +40,19 @@ public class UserService {
      * @return {@link Collection<User>}
      */
     public Collection<User> getUsers() {
-        return userMapper.toDto(userRepository.findAll());
+        return userMapper.fromEntity(userRepository.findAll());
     }
 
     /**
      * Saves the user. Generates a new {@link User#getId()}
      *
-     * @param user - the {@link User} to save
+     * @param userDto - the {@link User} to save
      * @return the new {@link User}
      */
-    public User saveUser(User user) {
-        UserEntity userEntity = userMapper.toEntity(user);
+    public User saveUser(User userDto) {
+        UserEntity userEntity = userMapper.toEntity(userDto);
 
         UserEntity saved = userRepository.save(userEntity);
-        return userMapper.toDto(saved);
+        return userMapper.fromEntity(saved);
     }
 }

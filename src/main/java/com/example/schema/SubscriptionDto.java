@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 /**
@@ -18,30 +19,30 @@ import java.time.LocalDateTime;
  */
 @Getter
 @Setter
-@NoArgsConstructor
 @ToString
 @Slf4j
-public class Subscription {
+@NoArgsConstructor
+public class SubscriptionDto {
 
     @Hidden
     private long id;
 
     @JsonIgnoreProperties({"subscriptions"})
-    private User user;
+    private UserDto user;
 
-    private Product product;
+    private ProductDto product;
 
     @Schema(description = "subscription start")
     private LocalDateTime startDate;
 
     @Schema(description = "subscription end")
-    private LocalDateTime endDate;
+    private LocalDateTime projectedEndDate;
+
+    private LocalDateTime lastUnpaused;
 
     @Schema(description = "true indicates that the subscription is paused")
     boolean isPaused;
 
-    public Subscription(User user, Product product) {
-        this.user = user;
-        this.product = product;
-    }
+    private Duration durationLeftAtLastUnpause;
+    private boolean isCanceled;
 }

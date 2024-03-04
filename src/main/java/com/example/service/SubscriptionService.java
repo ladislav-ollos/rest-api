@@ -1,17 +1,19 @@
 package com.example.service;
 
-import com.example.domain.SubscriptionEntity;
+import com.example.bo.Product;
+import com.example.bo.Subscription;
+import com.example.bo.User;
+import com.example.entity.SubscriptionEntity;
 import com.example.exception.ConflictException;
 import com.example.exception.NotFoundException;
 import com.example.mapper.SubscriptionMapper;
 import com.example.repository.SubscriptionRepository;
-import com.example.schema.Product;
-import com.example.schema.Subscription;
-import com.example.schema.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
 
 /**
  * @author Ladislav
@@ -37,7 +39,7 @@ public class SubscriptionService {
                 .or(() -> {
                     throw new NotFoundException();
                 }).get();
-        return subscriptionMapper.toDto(subscriptionEntity);
+        return subscriptionMapper.fromEntity(subscriptionEntity);
     }
 
     /**
@@ -50,8 +52,11 @@ public class SubscriptionService {
     public Subscription subscribe(Long userId, Long productId) {
         Subscription subscription = new Subscription(userService.getUser(userId), productService.getProduct(productId));
         SubscriptionEntity subscriptionEntity = subscriptionMapper.toEntity(subscription);
+        LocalDateTime now = LocalDateTime.now();
+        subscriptionEntity.setStartDate(now);
+        subscriptionEntity.setPaused(false);
         SubscriptionEntity saved = subscriptionRepository.save(subscriptionEntity);
-        return subscriptionMapper.toDto(saved);
+        return subscriptionMapper.fromEntity(saved);
     }
 
     /**
@@ -61,10 +66,9 @@ public class SubscriptionService {
      */
     public void pause(Long id) {
         SubscriptionEntity subscriptionEntity = subscriptionRepository.findById(id).orElseThrow(NotFoundException::new);
-        if (subscriptionEntity.isPaused()) {
-            throw new ConflictException("Already paused.");
+        if (subscriptionEntity.isPaused() || subscriptionEntity.isCanceled()) {
+            throw new ConflictException("Already paused or canceled.");
         }
-        // TODO: do whatever pause should do
         subscriptionEntity.setPaused(true);
         subscriptionRepository.save(subscriptionEntity);
     }
@@ -79,17 +83,24 @@ public class SubscriptionService {
         if (!subscriptionEntity.isPaused()) {
             throw new ConflictException("Not paused.");
         }
+        if (subscriptionEntity.isCanceled()) {
+            throw new ConflictException("Canceled subscription can not be unpaused.");
+        }
         // TODO: do whatever unpause should do
         subscriptionEntity.setPaused(false);
+        subscriptionEntity.setLastUnpaused(LocalDateTime.now());
         subscriptionRepository.save(subscriptionEntity);
     }
 
+
     /**
-     * Delete subscription by ID
+     * Cancel subscription by ID
      *
      * @param id - {@link Subscription#getId()}
      */
-    public void delete(Long id) {
-        subscriptionRepository.deleteById(id);
+    public void cancel(Long id) {
+        SubscriptionEntity subscriptionEntity = subscriptionRepository.findById(id).orElseThrow(NotFoundException::new);
+        subscriptionEntity.setCanceled(true);
+        subscriptionRepository.save(subscriptionEntity);
     }
 }
